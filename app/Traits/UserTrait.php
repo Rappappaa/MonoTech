@@ -54,7 +54,7 @@ trait UserTrait
      * @param User $user
      * @return array
      */
-    public function convertObjectToArray(User $user): array
+    public function convertUserObjectToArray(User $user): array
     {
         return [
             'id' => $user->id,
@@ -62,6 +62,8 @@ trait UserTrait
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
             'email' => $user->email,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at
         ];
     }
 }

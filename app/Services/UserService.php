@@ -4,12 +4,16 @@ namespace App\Services;
 
 use App\Http\BaseResponse;
 use App\Models\User;
+use App\Models\Wallet;
 use App\Traits\UserTrait;
+use App\Traits\WalletTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class UserService
 {
     use UserTrait;
+    use WalletTrait;
 
     private BaseResponse $baseResponse;
 
@@ -24,28 +28,53 @@ class UserService
      */
     public function userRegister(array $data): JsonResponse
     {
+        DB::beginTransaction();
+
         $user = $this->createUser($data);
 
         if(!$user instanceof User)
         {
+            DB::rollBack();
             return $this->baseResponse->jsonResponse(false,"Create user has failed. Please try again later.",[],500);
         }
 
-        $user = $this->convertObjectToArray($user);
+        $wallet = $this->addWalletToUser($user);
 
-        return $this->baseResponse->jsonResponse(true,"User created successfully",$user,201);
+        if(!$wallet instanceof Wallet)
+        {
+            DB::rollBack();
+            return $this->baseResponse->jsonResponse(false,"Create user's wallet has failed. Please try again later.",[],500);
+        }
+
+        DB::commit();
+
+        $user = $this->convertUserObjectToArray($user);
+
+        $wallet = $this->convertWalletObjectToArray($wallet);
+
+        $response = [
+            'user' => $user,
+            'wallet' => $wallet
+        ];
+
+        return $this->baseResponse->jsonResponse(true,"User created successfully",$response,201);
     }
 
     public function userUpdate(array $data): JsonResponse
     {
+        DB::beginTransaction();
+
         $user = $this->updateUser($data);
 
         if(!$user instanceof User)
         {
+            DB::rollBack();
             return $this->baseResponse->jsonResponse(false,"Update user has failed. Please try again later.",[],400);
         }
 
-        $user = $this->convertObjectToArray($user);
+        DB::commit();
+
+        $user = $this->convertUserObjectToArray($user);
 
         return $this->baseResponse->jsonResponse(true,"User updated successfully",$user,200);
     }

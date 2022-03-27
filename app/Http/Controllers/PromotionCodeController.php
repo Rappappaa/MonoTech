@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\BaseResponse;
+use App\Models\User;
 use App\Services\PromotionCodeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,11 +20,18 @@ class PromotionCodeController extends Controller
         $this->promotionCodeService = $promotionCodeService;
     }
 
+    /**
+     * @return JsonResponse
+     */
     public function getPromotionCodes(): JsonResponse
     {
         return $this->promotionCodeService->getPromotionCodes();
     }
 
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
     public function getPromotionCodeById($id): JsonResponse
     {
         $data = ['id' => $id];
@@ -42,9 +50,18 @@ class PromotionCodeController extends Controller
         return $this->promotionCodeService->getPromotionCodesById($id);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function promotionCodeRegister(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(),true);
+
+        if($data === null)
+        {
+            return $this->baseResponse->jsonResponse(false,"Empty request body.",[],204);
+        }
 
         $rules = [
             'start_date' => 'required|date',
@@ -61,5 +78,33 @@ class PromotionCodeController extends Controller
         }
 
         return $this->promotionCodeService->createPromotionCode($data);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function assignPromotionCode(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(),true);
+
+        if($data === null)
+        {
+            return $this->baseResponse->jsonResponse(false,"Empty request body.",[],204);
+        }
+
+        $rules = [
+            'code' => 'required|string|min:12|max:12'
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        if($validator->fails())
+        {
+            return $this->baseResponse->jsonResponse(false,"Validation has failed. Please check your fields",$validator->getMessageBag()->all(),400);
+        }
+        $user = User::find(3);
+
+        return $this->promotionCodeService->assignPromotionCode($user,$data);
     }
 }

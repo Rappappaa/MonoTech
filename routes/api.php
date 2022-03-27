@@ -22,6 +22,7 @@ Route::put('/user/update', [UserController::class, 'userUpdate']);
 Route::get('/backoffice/promotion-codes',[PromotionCodeController::class,'getPromotionCodes']);
 Route::post('/backoffice/promotion-codes',[PromotionCodeController::class,'promotionCodeRegister']);
 Route::get('/backoffice/promotion-codes/{id}',[PromotionCodeController::class,'getPromotionCodeById']);
+Route::post('/assign-promotion',[PromotionCodeController::class,'assignPromotionCode']);
 
 Route::group(['middleware' => ['jwt.verify']], function() {
 

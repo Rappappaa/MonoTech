@@ -19,7 +19,7 @@ class promotion_code_seeder extends Seeder
         for($i = 0; $i < 30; $i++)
         {
             DB::table('promotion_code')->insert([
-                'code' => Str::random(12),
+                'code' => strtoupper(Str::random(12)),
                 'start_date' => Carbon::now(),
                 'end_date' => Carbon::now()->addDays(random_int(1,60)),
                 'amount' => random_int(0,500),

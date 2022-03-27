@@ -13,4 +13,8 @@ class PromotionCode extends Model
 
     protected $fillable = ['code','start_date','end_date','amount','quota'];
 
+    public function user()
+    {
+        return $this->hasMany(User::class);
+    }
 }

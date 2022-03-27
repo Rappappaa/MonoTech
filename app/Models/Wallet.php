@@ -12,4 +12,12 @@ class Wallet extends Model
     protected $table = "wallet";
 
     protected $fillable = ['user_id','balance'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class,'id','user_id');
+    }
 }

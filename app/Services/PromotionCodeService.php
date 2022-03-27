@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Http\BaseResponse;
+use App\Models\AssignPromotionCode;
 use App\Models\PromotionCode;
+use App\Models\User;
 use App\Traits\PromotionCodeTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -37,12 +39,12 @@ class PromotionCodeService
     {
         $promotionCode = $this->findById($id);
 
-        if($promotionCode === null)
+        if($promotionCode === [])
         {
             return $this->baseResponse->jsonResponse(true,'Promotion code could not found.',[],200);
         }
 
-        return $this->baseResponse->jsonResponse(true,'Promotion code found.',$promotionCode->toArray(),200);
+        return $this->baseResponse->jsonResponse(true,'Promotion code found.',$promotionCode,200);
     }
 
     public function createPromotionCode(array $data): JsonResponse
@@ -60,6 +62,28 @@ class PromotionCodeService
         DB::commit();
 
         return $this->baseResponse->jsonResponse(true,"Promotion Code created successfully",$promotionCode->toArray(),201);
+    }
+
+    /**
+     * @param User $user
+     * @param array $data
+     * @return JsonResponse
+     */
+    public function assignPromotionCode(User $user,array $data): JsonResponse
+    {
+        DB::beginTransaction();
+
+        $assignCode = $this->assignCodeToUser($user,$data['code']);
+
+        if($assignCode !== '')
+        {
+            DB::rollBack();
+            return $this->baseResponse->jsonResponse(false,$assignCode,[],400);
+        }
+
+        DB::commit();
+
+        return $this->baseResponse->jsonResponse(true,"Promotion Code assigned successfully",[],201);
     }
 
 }

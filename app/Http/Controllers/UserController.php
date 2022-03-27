@@ -27,6 +27,11 @@ class UserController
     {
         $data = json_decode($request->getContent(),true);
 
+        if($data === null)
+        {
+            return $this->baseResponse->jsonResponse(false,"Empty request body.",[],204);
+        }
+
         $rules = [
             'username' => 'required|string|max:50|unique:user,username',
             'firstname' => 'required|string|max:50',
@@ -48,6 +53,11 @@ class UserController
     public function userUpdate(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(),true);
+
+        if($data === null)
+        {
+            return $this->baseResponse->jsonResponse(false,"Empty request body.",[],204);
+        }
 
         $rules = [
             'id' => 'required|integer',

@@ -8,6 +8,7 @@ use App\Services\PromotionCodeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PromotionCodeController extends Controller
 {
@@ -86,6 +87,14 @@ class PromotionCodeController extends Controller
      */
     public function assignPromotionCode(Request $request): JsonResponse
     {
+        $token = $request->header()['authorization'][0];
+
+        $split = explode(' ',$token);
+
+        $token = $split[1];
+
+        $user = JWTAuth::toUser($token);
+
         $data = json_decode($request->getContent(),true);
 
         if($data === null)
@@ -103,7 +112,6 @@ class PromotionCodeController extends Controller
         {
             return $this->baseResponse->jsonResponse(false,"Validation has failed. Please check your fields",$validator->getMessageBag()->all(),400);
         }
-        $user = User::find(3);
 
         return $this->promotionCodeService->assignPromotionCode($user,$data);
     }

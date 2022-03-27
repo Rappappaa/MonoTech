@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PromotionCodeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -17,13 +18,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/user/register', [UserController::class, 'userRegister']);
-Route::put('/user/update', [UserController::class, 'userUpdate']);
-
-Route::get('/backoffice/promotion-codes',[PromotionCodeController::class,'getPromotionCodes']);
-Route::post('/backoffice/promotion-codes',[PromotionCodeController::class,'promotionCodeRegister']);
-Route::get('/backoffice/promotion-codes/{id}',[PromotionCodeController::class,'getPromotionCodeById']);
-Route::post('/assign-promotion',[PromotionCodeController::class,'assignPromotionCode']);
+Route::post('/login',[AuthController::class,'login'])->name('login');
 
 Route::group(['middleware' => ['jwt.verify']], function() {
+    Route::get('/logout',[AuthController::class,'logout']);
+
+    Route::put('/user/update', [UserController::class, 'userUpdate']);
+
+    Route::get('/backoffice/promotion-codes',[PromotionCodeController::class,'getPromotionCodes']);
+    Route::post('/backoffice/promotion-codes',[PromotionCodeController::class,'promotionCodeRegister']);
+    Route::get('/backoffice/promotion-codes/{id}',[PromotionCodeController::class,'getPromotionCodeById']);
+    Route::post('/assign-promotion',[PromotionCodeController::class,'assignPromotionCode']);
 
 });

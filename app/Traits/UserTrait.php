@@ -27,18 +27,12 @@ trait UserTrait
     }
 
     /**
+     * @param User $user
      * @param array $data
      * @return ?User
      */
-    public function updateUser(array $data): ?User
+    public function updateUser(User $user,array $data): ?User
     {
-        $user = User::find((int)$data['id']);
-
-        if($user === null)
-        {
-            return null;
-        }
-
         $user->firstname = $data['firstname'];
         $user->lastname = $data['lastname'];
 
@@ -65,5 +59,14 @@ trait UserTrait
             'created_at' => $user->created_at,
             'updated_at' => $user->updated_at
         ];
+    }
+
+    /**
+     * @param array $credentials
+     * @return User|null
+     */
+    public function loginWithEmailAndPassword(array $credentials): ?User
+    {
+        return User::Where('email','=',$credentials['email'])->Where('password','=',$credentials['password'])->first();
     }
 }

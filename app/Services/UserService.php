@@ -60,11 +60,16 @@ class UserService
         return $this->baseResponse->jsonResponse(true,"User created successfully",$response,201);
     }
 
-    public function userUpdate(array $data): JsonResponse
+    /**
+     * @param User $user
+     * @param array $data
+     * @return JsonResponse
+     */
+    public function userUpdate(User $user,array $data): JsonResponse
     {
         DB::beginTransaction();
 
-        $user = $this->updateUser($data);
+        $user = $this->updateUser($user,$data);
 
         if(!$user instanceof User)
         {
@@ -77,5 +82,14 @@ class UserService
         $user = $this->convertUserObjectToArray($user);
 
         return $this->baseResponse->jsonResponse(true,"User updated successfully",$user,200);
+    }
+
+    /**
+     * @param array $credentials
+     * @return User|null
+     */
+    public function userLogin(array $credentials): ?User
+    {
+        return $this->loginWithEmailAndPassword($credentials);
     }
 }

@@ -46,7 +46,7 @@ trait PromotionCodeTrait
             return 'Promotion code could not found.';
         }
 
-        if($promotionCode->quota === 0)
+        if($promotionCode->quota < 1)
         {
             return 'This promotion code has been reached maximum user.';
         }
@@ -97,7 +97,6 @@ trait PromotionCodeTrait
         {
 
             $tempUser = [];
-            $tempWallet = [];
 
             $checkAssign = AssignPromotionCode::Where('promotion_code_id','=',$item['id'])->get()->toArray();
 

@@ -7,6 +7,7 @@ use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController
 {
@@ -52,6 +53,14 @@ class UserController
 
     public function userUpdate(Request $request): JsonResponse
     {
+        $token = $request->header()['authorization'][0];
+
+        $split = explode(' ',$token);
+
+        $token = $split[1];
+
+        $user = JWTAuth::toUser($token);
+
         $data = json_decode($request->getContent(),true);
 
         if($data === null)
@@ -60,7 +69,6 @@ class UserController
         }
 
         $rules = [
-            'id' => 'required|integer',
             'firstname' => 'required|string|min:2|max:50',
             'lastname' => 'required|string|min:2|max:50',
         ];
@@ -72,6 +80,6 @@ class UserController
             return $this->baseResponse->jsonResponse(false,"Validation has failed. Please check your fields",$validator->getMessageBag()->all(),400);
         }
 
-        return $this->userService->userUpdate($data);
+        return $this->userService->userUpdate($user,$data);
     }
 }

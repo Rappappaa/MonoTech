@@ -1,4 +1,4 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://www.monotech.group/_nuxt/img/logo.d66fd6e.svg" width="200"></a></p>
+<p align="center"><a href="https://www.monotech.group/" target="_blank"><img src="https://www.monotech.group/_nuxt/img/logo.d66fd6e.svg" width="200"></a></p>
 
 
 ## About this project
